@@ -102,7 +102,24 @@ ETIQUETAS_ES = {
 
 # ── Funciones de procesamiento ────────────────────────────────────────────────
 def limpiar_texto(texto: str) -> str:
-    doc = nlp(str(texto).lower())
+    reemplazos = {
+        "agui": "aguinaldo",
+        "aguinald": "aguinaldo",
+        "vacas": "vacaciones",
+        "vacacione": "vacaciones",
+        "pruba": "prueba",
+        "ccss": "caja seguro social",
+        "patrono": "empleador",
+        "jefe": "empleador",
+        "botaron": "despidieron",
+        "echaron": "despidieron",
+        "rebajan": "descuentan",
+        "rebajo": "descuento",
+    }
+    texto_normalizado = str(texto).lower()
+    for origen, destino in reemplazos.items():
+        texto_normalizado = re.sub(rf"\b{re.escape(origen)}\b", destino, texto_normalizado)
+    doc = nlp(texto_normalizado)
     tokens = [
         t.lemma_ for t in doc
         if not t.is_stop and not t.is_punct
